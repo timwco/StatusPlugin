@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+
+  "name": "TIY Atlanta: Student Status",
+  "description": "This will show your current status, based on your assignments",
+  "version": "1.0.0",
+
+  "content_scripts": [ {
+      "js": [ "index.js" ],
+      "css": [ "main.css" ],
+      "matches": [
+        "https://github.com/*"
+      ]
+   } ],
+
+  "icons": { "16": "icon16.png", "48": "icon48.png", "128": "icon128.png" },
+
+  "options_page": "options.html",
+
+  "permissions": [
+    "https://api.github.com/",
+    "storage"
+  ]
+}

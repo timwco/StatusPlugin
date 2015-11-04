@@ -1,29 +1,38 @@
 body {
   font-family: "PT Sans Caption", Helvetica, Arial, sans-serif;
   font-size 62.5%;
-  background: #abc;
+  background: #3a3a3a;
 }
 
 .wrapper {
   margin: 200px auto;
   width: 500px;
-  border: 1px solid #def;
+  border: 1px solid #d8d8d8;
+  background-color: #f2f2f2;
+  border-radius: 5px;
 }
 
 h1 {
-  text-align: center;
+  margin-left: 25px;
+}
+
+h3 {
+  padding-left: 25px;
+  margin-bottom: 0;
 }
 
 p {
-  text-align: center;
+  padding-left: 25px;
+  margin: 3px 0;
+  font-style: italic;
 }
 
 a {
-  color: #def;
+  color: #008cba;
 }
 
 form {
-  margin: 25px;
+  margin: 0 25px 25px 25px;
 }
 
 .add-token, .remove-token {
@@ -51,14 +60,22 @@ input {
   padding: 5px;
   border: 1px solid #456;
   width: 350px;
+  margin-top: 5px;
 }
 input.weekend {
   width: 350px;
 }
 
 button {
-  background: #def;
+  background: #008cba;
+  color: #fff;
   padding: 5px;
-  border: 1px solid #456;
+  border: 1px solid #008cba;
   cursor: pointer;
+}
+
+.help {
+  font-size: 11px;
+  margin-bottom: 15px;
+  margin-left:25px;
 }

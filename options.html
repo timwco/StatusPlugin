@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Assignment Ratio Options</title>
+  <title>TIY Atlanta: Student Status Options</title>
   <link href='http://fonts.googleapis.com/css?family=PT+Sans+Caption:400,700' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="options.css">
 </head>
 <body>
   <div class="wrapper">
-    <h1>Assignment Ratio</h1>
+    <h1>TIY Atlanta: Student Status</h1>
 
+
+    <h3>Github Settings</h3>
     <p>Add a Github <a target="_blank" href="https://github.com/settings/tokens/new">personal access token</a> to not get rate limited.</p>
 
     <form id="github_assignments_options">
@@ -25,6 +27,17 @@
 
     </form>
 
+    <h3>Account Settings</h3>
+    <form id="github_account_info">
+      <input type="text" name="org" class="org" placeholder="Class Org"><br />
+      <input type="text" name="username" class="username" placeholder="Github User Name">
+      <button>Update</button>
+    </form>
+
+
+    <div class="help">
+      Need help? <a target="_blank" href="https://github.com/twhitacre/StatusPlugin/wiki/Help">Click here</a> to learn more.
+    </div>
   </div>
   <script src="options.js"></script>
 </body>

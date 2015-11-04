@@ -53,7 +53,6 @@ function setUpAccountSettings(items) {
 }
 
 chrome.storage.sync.get(['token', 'org', 'user'], function(items) {
-  console.log(items);
   hasToken(!!items.token);
   setUpAccountSettings(items);
 });

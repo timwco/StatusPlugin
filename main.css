@@ -1,15 +1,33 @@
-.tw_percent {
+.tw_percent3 {
+  color: #333333;
+  border-top: 1px solid #eeeeee;
+  padding: 15px 0 5px 0;
+}
+.tw_percent3 h3 {
+  margin: 0 0 10px 0;
+}
+.tw_percent3 p {
+  margin: 0 0 10px 0;
+}
+
+.tw_warning3 {
+  background-color: rgb(239, 197, 13);
   color: white;
-  background-color: #43ac6a;
-  padding: 5px 8px;
+  padding: 3px 5px 3px 6px;
   border-radius: 3px;
 }
-.tw_danger {
+
+.tw_danger3 {
+  color: white;
+  padding: 3px 5px 3px 6px;
+  border-radius: 3px;
   background-color: #f04124;
 }
-.tw_grey {
-  background-color: #e7e7e7;
-  color: #767676;
+.tw_good3 {
+  color: white;
+  padding: 3px;
+  border-radius: 3px;
+  background-color: #43ac6a;
 }
 
 

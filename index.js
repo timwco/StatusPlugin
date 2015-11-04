@@ -1,205 +1,158 @@
-// ;(function () {
+;(function () {
 
-//   var token;
-//   var weekend;
-//   var ghAPI = 'https://api.github.com/repos/';
-//   var regex = /Assignment (.*)/i;
-//   var pointsAvailable = 0;
-//   var student_points = [];
+  var token;
+  var weekend;
+  var org;
+  var user;
+  var ghAPI = 'https://api.github.com/repos/';
+  var regex = /Assignment (.*)/i;
+  var pointsAvailable = 0;
+  var student_points = [];
 
-//   function checkComplete(len) {
-//     if (student_points.length >= len) {
-      
-//       // Remap Object & Add a percentage
-//       student_points.forEach( function (sp) {
-//         sp.percentageComplete = Math.floor((sp.points / pointsAvailable) * 100);
-//       });
-    
-//       // Now that we have everything, let's add to the page
-//       showPercentOnPage();
-//     }
-//   }
+  function checkComplete() {
+    // Remap Object & Add a percentage
+    student_points.forEach( function (sp) {
+      sp.percentageComplete = Math.floor((sp.points / pointsAvailable) * 100);
+    });
+  
+    // Now that we have everything, let's add to the page
+    showPercentOnPage();
+  }
 
-//   function showPercentOnPage() {
-//     var $rows = document.querySelectorAll('.js-org-person');
-//     [].forEach.call($rows, function ($row) {
+  function showPercentOnPage() {
 
-//       // Find the elements on the page we will need to access
-//       var $userBlock = $row.querySelector('.member-info').querySelector('.member-username');
-//       var $finalArea = $row.querySelector('.member-meta');
+    // Find Element
+    var $infoBlock = document.querySelector('.vcard-names');
 
-//       // Read current node's username and get that user info
-//       var login = $userBlock.innerHTML;
-//       var studentByNode = student_points.filter( function (s) {
-//         return s.student === login;
-//       });
+    // Student's Info
+    var studentByNode = student_points[0];
 
-//       // Create our percent element
-//       var spanTag = document.createElement('span');
-//       var percent = document.createTextNode(studentByNode[0].percentageComplete + '%');
-//       spanTag.classList.add('tw_percent');
-//       spanTag.appendChild(percent);
+    // Create our percent element
+    var infoDiv = document.createElement('div');
+    var className = '';
 
-//       // Check for danger zone
-//       if (studentByNode[0].percentageComplete < 80) {
-//         spanTag.classList.add('tw_danger');
-//       }
+    if (studentByNode.percentageComplete < 65) {
+      className = 'tw_danger3';
+    } else if (studentByNode.percentageComplete < 80) {
+      className = 'tw_warning3';
+    } else {
+      className = 'tw_good3';
+    }
 
-//       // Check for non Student members
-//       if (studentByNode[0].points <= 0){
-//         spanTag.classList.add('tw_grey');
-//         spanTag.innerHTML = "N/A";
-//       }
+    // Fuck Yeah ES6 Template strings
+    var htmlContent = `
+      <div class="tw_percent3">
+        <h3>The Iron Yard</h3>
+        <p>
+          Assignment Completion: 
+          <span class="${className}">
+            ${studentByNode.percentageComplete}%
+          </span>
+        </p>
+        <p>
+          <a target="_blank" href="https://github.com/${org}/Assignments/issues/assigned/${user}">Your Assignments</a> | 
+          <a target="_blank" href="https://github.com/twhitacre/StatusPlugin/wiki/Help">Help <span class="octicon octicon-question"></span></a>
+        </p>
+      </div>
+    `;
 
-//       // Empty the 2-Factor Area and
-//       // Replace with our customized span
-//       $finalArea.innerHTML = '';
-//       $finalArea.appendChild(spanTag);
+    // Dump Our Final node to the page
+    $infoBlock.insertAdjacentHTML('afterend', htmlContent);
+  }
 
-//     });
+  function getJSON(url, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState == 4) {
+        var resp = JSON.parse(xhr.responseText);
+        cb(resp);
+      }
+    }
+    xhr.send();
+  }
 
-//     // Hide Spinner
-//     toggleSpinner(false);
-//   }
+  function loadOpenRatio(repo) {
 
-//   function getJSON(url, cb) {
-//     var xhr = new XMLHttpRequest();
-//     xhr.open("GET", url, true);
-//     xhr.onreadystatechange = function() {
-//       if (xhr.readyState == 4) {
-//         var resp = JSON.parse(xhr.responseText);
-//         cb(resp);
-//       }
-//     }
-//     xhr.send();
-//   }
+    // Get the count of assignments
+    // Generate an array of all of the assignments
+    var issue_url = ghAPI+org+'/'+repo+'/issues?state=all&assignee='+user;
+    if (token) { issue_url = issue_url + "&access_token=" + token; }
+    getJSON(issue_url, function (issues) {
+      var assignmentCount = [];
+      for (var i = 1; i <= issues.length; i++) {
+        assignmentCount.push(i);
+      }
 
-//   function loadOpenRatio(repo, owner) {
+      // Get total points available
+      assignmentCount.forEach( function (a) {
+        if (weekend.indexOf(a) >= 0){
+          pointsAvailable += 4;
+        } else {
+          pointsAvailable += 1;
+        }
+      });
 
-//     // Get All users
-//     var user_url = ghAPI+owner+'/'+repo+'/assignees';
-//     if (token) { user_url = user_url + "?access_token=" + token + '&per_page=100'; }
-//     getJSON(user_url, function (users) {
+      // Get all closed issues by user      
+      var params = 'state=closed&labels=complete&assignee='+user;
+      var user_issues_url = ghAPI+org+'/'+repo+'/issues?'+params;
+      if (token) { user_issues_url = user_issues_url + "&access_token=" + token; }
 
-//       // Get the count of assignments
-//       // Generate an array of all of the assignments
-//       // FIX ME - just being lazy. Need a user to get assignment count.
-//       // FIX ME - there has to be a better way
-//       var issue_url = ghAPI+owner+'/'+repo+'/issues?state=all&assignee='+users[0].login;
-//       if (token) { issue_url = issue_url + "&access_token=" + token; }
-//       getJSON(issue_url, function (issues) {
-//         var assignmentCount = [];
-//         for (var i = 1; i <= issues.length; i++) {
-//           assignmentCount.push(i);
-//         }
+      getJSON(user_issues_url, function (user_issues) {
 
-//         // Get total points available
-//         assignmentCount.forEach( function (a) {
-//           if (weekend.indexOf(a) >= 0){
-//             pointsAvailable += 4;
-//           } else {
-//             pointsAvailable += 1;
-//           }
-//         });
-
-//         // Get all closed issues by user
-//         users.forEach( function (user) {
-          
-//           var params = 'state=closed&labels=complete&assignee='+user.login;
-//           var user_issues_url = ghAPI+owner+'/'+repo+'/issues?'+params;
-//           if (token) { user_issues_url = user_issues_url + "&access_token=" + token; }
-
-//           getJSON(user_issues_url, function (user_issues) {
-
-//             // Check which assignment it is (regex)
-//             var user_assignments_complete = [];
-//             if(user_issues.length > 0) {
-//               user_issues.forEach(function (issue) {
-//                 var assignment = issue.title.match(regex);
-//                 user_assignments_complete.push(Number(assignment[1]));
-//               });
-//             }
+        // Check which assignment it is (regex)
+        var user_assignments_complete = [];
+        if(user_issues.length > 0) {
+          user_issues.forEach(function (issue) {
+            var assignment = issue.title.match(regex);
+            user_assignments_complete.push(Number(assignment[1]));
+          });
+        }
 
 
-//             // Calculate their points & percentage
-//             // Build an array of students, with name & points            
-//             var yourPoints = 0;
-//             user_assignments_complete.forEach( function (a) {
-//               if (weekend.indexOf(a) >= 0){
-//                 yourPoints += 4;
-//               } else {
-//                 yourPoints += 1;
-//               }
-//             });
+        // Calculate their points & percentage
+        // Build an array of students, with name & points            
+        var yourPoints = 0;
+        user_assignments_complete.forEach( function (a) {
+          if (weekend.indexOf(a) >= 0){
+            yourPoints += 4;
+          } else {
+            yourPoints += 1;
+          }
+        });
 
-//             student_points.push({
-//               student: user.login,
-//               points: yourPoints
-//             });
-
-
-//             // Method to check for complete
-//             checkComplete(users.length);
-
-//           });
-//         });
+        student_points.push({
+          student: user,
+          points: yourPoints
+        });
 
 
+        // Method to check for complete
+        checkComplete();
 
-//       });
-//     });
-//   }
+      });
+    });
+  }
 
-//   function toggleSpinner (show) {
+  function run(items) {
+    var matches = window.location.pathname.match(/\/(.*)/);
+    var myAccount = matches[1];
 
-//     // Find Nav Area
-//     $navArea = document.querySelector('.subnav-links');
+    if (myAccount === user) {
 
-//     if(show) {
+      getJSON('https://raw.githubusercontent.com/'+org+'/Data/master/weekend.json', function (response) {
+        weekend = response;      
+        loadOpenRatio('Assignments');
+      });
+    }
+  }
 
-//       // Build Container
-//       var $container = document.createElement('a');
-//       $container.classList.add('subnav-item');
-//       $container.classList.add('tw_loader-stuff');
-
-//       // Create Text Node
-//       var $text = document.createTextNode('Calculating ');
-
-//       // Build Spinner
-//       var $spinner = document.createElement('span');
-//       $spinner.classList.add('tw_throbber-loader');
-
-//       // Put it all together and display
-//       $container.appendChild($text);
-//       $container.appendChild($spinner);
-//       $navArea.appendChild($container);
-
-//     } else {
-//       document.querySelector('.tw_loader-stuff').style.display = 'none';
-//     }
-//   }
-
-//   function run() {
-//     var matches, repo, owner;
-
-//     matches = window.location.pathname.match(/^\/.+\/(.+)\/people/);
-
-//     if (matches) {
-//       owner = matches[1];
-//       repo = 'Assignments';
-
-//       getJSON('https://raw.githubusercontent.com/'+owner+'/Data/master/weekend.json', function (response) {
-//         weekend = response;      
-//         loadOpenRatio(repo, owner);
-//         toggleSpinner(true);
-//       });
-//     }
-//   }
-
-//   chrome.storage.sync.get(['token', 'weekend'], function(items) {
-//     token = items.token;
-//     run();
-//   });
+  chrome.storage.sync.get(['token', 'org', 'user'], function(items) {
+    token = items.token;
+    org = items.org;
+    user = items.user;
+    run();
+  });
   
 
-// }());
+}());

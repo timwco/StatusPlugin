@@ -1,3 +1,10 @@
+var form = document.querySelector('#github_assignments_options');
+var addEl = document.querySelector('.add-token');
+var removeEl = document.querySelector('.remove-token');
+var formAccount = document.querySelector('#github_account_info');
+var orgInput = document.querySelector('.org');
+var userInput = document.querySelector('.username');
+
 function addToken(event) {
   event.preventDefault();
   var token = document.querySelector('.token').value;
@@ -28,10 +35,25 @@ function hasToken(has) {
   }
 }
 
-var form = document.querySelector('#github_assignments_options');
-var addEl = document.querySelector('.add-token');
-var removeEl = document.querySelector('.remove-token');
+function updateAccountSettings(event) {
+  event.preventDefault();
+  var org = orgInput.value;
+  var user = userInput.value;
 
-chrome.storage.sync.get(['token', 'weekend'], function(items) {
+  chrome.storage.sync.set({'org': org, 'user': user}, function() {
+    alert('Account Settings Saved!');
+  });
+}
+
+function setUpAccountSettings(items) {
+  if (items.org) { orgInput.value = items.org }
+  if (items.user) { userInput.value = items.user }
+
+  formAccount.addEventListener('submit', updateAccountSettings);
+}
+
+chrome.storage.sync.get(['token', 'org', 'user'], function(items) {
+  console.log(items);
   hasToken(!!items.token);
+  setUpAccountSettings(items);
 });

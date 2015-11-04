@@ -2,6 +2,8 @@
 
 This is a simple plugin that will display the correctly calculated percentage of assignments complete.
 
+It will display it on your personal Github profile page, like the image below:
+
 ![](./screenshot.png)
 
 ## Some Links
